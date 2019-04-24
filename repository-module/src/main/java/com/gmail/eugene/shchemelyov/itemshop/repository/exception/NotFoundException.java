@@ -1,0 +1,7 @@
+package com.gmail.eugene.shchemelyov.itemshop.repository.exception;
+
+public class NotFoundException extends RuntimeException {
+    public NotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
