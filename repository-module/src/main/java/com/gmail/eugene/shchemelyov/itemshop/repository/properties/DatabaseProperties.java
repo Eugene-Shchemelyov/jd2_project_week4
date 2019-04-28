@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DatabaseProperties {
-    @Value("${database.driver.name}")
+    @Value("${database.driver}")
     private String databaseDriverName;
     @Value("${database.url}")
     private String databaseURL;
@@ -13,7 +13,7 @@ public class DatabaseProperties {
     private String databaseUsername;
     @Value("${database.password:}")
     private String databasePassword;
-    @Value("${database.init.file}")
+    @Value("${database.initial.file}")
     private String databaseInitialFile;
 
     public String getDatabaseDriverName() {

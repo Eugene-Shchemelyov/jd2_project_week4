@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Items</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <a th:href="@{/}">about</a>
+</head>
+<body>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="logout"/>
+</form>
+<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+<th:block th:each="item,stat : ${items}">
+    <li th:text="${stat.count} + ' ' + ${item.name} + ' ' + ${item.status.toString()}"></li>
+</th:block>
+</body>
+</html>

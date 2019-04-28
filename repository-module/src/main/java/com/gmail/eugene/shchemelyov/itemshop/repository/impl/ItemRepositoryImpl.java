@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,14 +41,31 @@ public class ItemRepositoryImpl extends ConnectionRepositoryImpl implements Item
                 return items;
             }
         } catch (SQLException e) {
-            logger.error(DATABASE_ERROR_MESSAGE);
+            logger.error("{} {}", DATABASE_ERROR_MESSAGE, e.getMessage(), e);
             throw new DatabaseException(String.format("%s %s", DATABASE_ERROR_MESSAGE, e.getMessage()), e);
         }
     }
 
     @Override
     public Item add(Connection connection, Item item) {
-        return null;
+        String query = "INSERT INTO T_ITEM (F_NAME, F_STATUS, F_DELETED) " +
+                "VALUES (?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, item.getName());
+            ps.setString(2, item.getStatus().name());
+            ps.setBoolean(3, item.isDeleted());
+            int countItemsAdded = ps.executeUpdate();
+            logger.info("Count items added: {}", countItemsAdded);
+            try (ResultSet resultSet = ps.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    item.setId(resultSet.getLong(1));
+                }
+                return item;
+            }
+        } catch (SQLException e) {
+            logger.error("{} {}", DATABASE_ERROR_MESSAGE, e.getMessage(), e);
+            throw new DatabaseException(String.format("%s %s", DATABASE_ERROR_MESSAGE, e.getMessage()), e);
+        }
     }
 
     private Item getItem(ResultSet resultSet) throws SQLException {

@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Users</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <a th:href="@{/}">about</a>
+</head>
+<body>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="logout"/>
+</form>
+<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+<th:block th:each="user,stat : ${users}">
+    <li th:text="${stat.count} + ' ' + ${user.username} + ' ' + ${user.password} + ' ' + ${user.roleName}"></li>
+</th:block>
+</body>
+</html>

@@ -5,8 +5,8 @@
             <PatternLayout pattern="%d %-5p %msg%n"/>
         </Console>
         <RollingFile name="RollingFile"
-                     fileName="logs/chest.log"
-                     filePattern="logs/chest.%d{dd-MMM}.log">
+                     fileName="logs/itemshop.log"
+                     filePattern="logs/itemshop.%d{dd-MMM}.log">
             <PatternLayout pattern="%d %-5p %msg%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="5 MB"/>
@@ -16,8 +16,8 @@
     </Appenders>
     <Loggers>
         <Root level="debug">
-            <AppenderRef ref="Console" level="info"/>
-            <AppenderRef ref="RollingFile" level="info"/>
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
         </Root>
     </Loggers>
 </Configuration>

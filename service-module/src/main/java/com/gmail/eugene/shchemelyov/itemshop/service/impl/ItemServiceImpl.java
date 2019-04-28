@@ -16,7 +16,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.gmail.eugene.shchemelyov.itemshop.repository.constant.ExceptionMessageConstant.CONNECTION_LOST_MESSAGE;
+import static com.gmail.eugene.shchemelyov.itemshop.repository.constant.ExceptionMessageConstant.ADD_ITEM;
+import static com.gmail.eugene.shchemelyov.itemshop.repository.constant.ExceptionMessageConstant.SERVICE_ERROR_MESSAGE;
 import static com.gmail.eugene.shchemelyov.itemshop.repository.constant.ExceptionMessageConstant.TRANSACTION_FAILED_MESSAGE;
 import static com.gmail.eugene.shchemelyov.itemshop.repository.constant.ItemConstant.IS_DELETED;
 
@@ -50,16 +51,16 @@ public class ItemServiceImpl implements ItemService {
                 throw new ServiceException(String.format(("%s %s"), TRANSACTION_FAILED_MESSAGE, e.getMessage()), e);
             }
         } catch (SQLException e) {
-            logger.error("{} {}", CONNECTION_LOST_MESSAGE, e.getMessage());
-            throw new ServiceException(String.format(("%s %s"), CONNECTION_LOST_MESSAGE, e.getMessage()), e);
+            logger.error("{} {}", SERVICE_ERROR_MESSAGE, e.getMessage());
+            throw new ServiceException(String.format(("%s %s"), SERVICE_ERROR_MESSAGE, e.getMessage()), e);
         }
     }
 
     @Override
     public ItemDTO add(ItemDTO itemDTO) {
         try (Connection connection = itemRepository.getConnection()) {
+            connection.setAutoCommit(false);
             try {
-                connection.setAutoCommit(false);
                 Item item = itemConverter.toItem(itemDTO);
                 item.setDeleted(IS_DELETED);
                 Item savedItem = itemRepository.add(connection, item);
@@ -67,12 +68,13 @@ public class ItemServiceImpl implements ItemService {
                 return itemConverter.toItemDTO(savedItem);
             } catch (Exception e) {
                 connection.rollback();
-                logger.error("{} {}", TRANSACTION_FAILED_MESSAGE, e.getMessage());
+                logger.error("{} {} {} {}", TRANSACTION_FAILED_MESSAGE, ADD_ITEM, itemDTO.getName(), e.getMessage());
                 throw new ServiceException(String.format(("%s %s"), TRANSACTION_FAILED_MESSAGE, e.getMessage()), e);
             }
         } catch (SQLException e) {
-            logger.error("{} {}", CONNECTION_LOST_MESSAGE, e.getMessage());
-            throw new ServiceException(String.format(("%s %s"), CONNECTION_LOST_MESSAGE, e.getMessage()), e);
+            logger.error("{} {}", SERVICE_ERROR_MESSAGE, e.getMessage());
+            throw new ServiceException(String.format(
+                    ("%s %s %s %s"), SERVICE_ERROR_MESSAGE, ADD_ITEM, itemDTO.getName(), e.getMessage()), e);
         }
     }
 }

@@ -66,9 +66,10 @@ public class ConnectionRepositoryImpl implements ConnectionRepository {
     private void processSQL(Connection connection) throws SQLException {
         connection.setAutoCommit(false);
         try (Statement statement = connection.createStatement()) {
-            String tablesFileName = this.getClass().getResource(databaseProperties.getDatabaseInitialFile()).getPath();
+            String initDatabaseFileName =
+                    this.getClass().getResource(databaseProperties.getDatabaseInitialFile()).getPath();
             List<String> listQueries = new ArrayList<>();
-            readFileQueries(tablesFileName, listQueries);
+            readFileQueries(initDatabaseFileName, listQueries);
             for (String query : listQueries) {
                 statement.addBatch(query);
             }
